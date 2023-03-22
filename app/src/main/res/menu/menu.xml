@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="legs + shoulders"
+        android:icon="@drawable/legs"
+        android:id="@+id/legs"/>
+    <item android:title="chest + triceps"
+        android:icon="@drawable/chest"
+        android:id="@+id/chest"/>
+    <item android:title="biceps + back"
+        android:icon="@drawable/arms"
+        android:id="@+id/biceps"/>
+</menu>
