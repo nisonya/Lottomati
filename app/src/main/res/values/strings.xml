@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">test_Nikitina</string>
+    <string name="Barbell_Overhead_Press">1. Take a roughly shoulder width grip. There should be a straight line from your elbow to fist (vertical forearms).
+2.Pull your chin back and press the weight toward the ceiling by extending at the elbow joint and flexing at the shoulder joint.
+3.Press until your elbows are extended and push your head forward slightly.
+4.Return to the start position with control. Pulling your chin back to allow the bar to pass your face safely.</string>
+    <string name="Dumbbell_Seated_Overhead_Press">1.Sit on a bench with back support. Raise the dumbbells to shoulder height with your palms forward.
+2.Raise the dumbbells upwards and pause at the contracted position.
+3.Lower the weights back to starting position.</string>
+    <string name="Cable_Lateral_Raise">1.Use a handle attachment with the cable set all the way to the bottom of the machine.
+2.You should vertically abduct at the shoulder raising your arm straight out to the side.
+3.Raise until your arm is parallel with the ground and then back to the starting position.</string>
+    <string name="sd3">test_Nikitina</string>
+    <string name="dv">test_Nikitina</string>
+    <string name="sd">test_Nikitina</string>
+    <string name="vd">test_Nikitina</string>
 </resources>
