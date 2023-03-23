@@ -44,7 +44,6 @@ public class MusclesAdapter extends RecyclerView.Adapter<MusclesAdapter.MusclesV
     public void onBindViewHolder(@NonNull MusclesViewHoler holder, int position) {
         holder.bind(position);
         Muscles musclesItem = mMuscles.get(position);
-        holder.chipId.setText(String.valueOf(musclesItem.getId()));
         holder.chipMuscle.setText(String.valueOf(musclesItem.getName()));
 
         //click
@@ -71,7 +70,6 @@ public class MusclesAdapter extends RecyclerView.Adapter<MusclesAdapter.MusclesV
         public MusclesViewHoler(@NonNull View itemView) {
             super(itemView);
             chipMuscle = itemView.findViewById(R.id.chip_item);
-            chipId = itemView.findViewById(R.id.chip_id);
         }
         void bind(int listIndex){/*
             Muscles musclesItem = mMuscles.get(listIndex);

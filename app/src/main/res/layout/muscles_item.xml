@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
+    android:padding="10dp"
     android:layout_height="wrap_content">
 
     <com.google.android.material.chip.Chip
@@ -10,7 +11,6 @@
         style="@style/Widget.MaterialComponents.Chip.Choice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:checked="false"
         android:fontFamily="@font/roboto_slab"
@@ -18,15 +18,7 @@
         android:textSize="14sp"
         app:chipStrokeColor="@color/purple_500"
         app:chipStrokeWidth="3dp"
-        app:layout_constraintStart_toEndOf="@+id/chip_id"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/chip_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/chip_item"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

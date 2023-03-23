@@ -4,23 +4,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.test_nikitina.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
     TextView txt;
-    ArrayList<Muscles> muscles;
     MusclesAdapter musclesAdapter;
     RecyclerView musclesList;
+    ArrayList<Muscles> muscles;
+    List<Integer> id_grp= Base.getId_group();
+    List<String> names= Base.getName_muscle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         txt = (TextView) findViewById(R.id.textView);
 //recycler
         musclesList = findViewById(R.id.RecyclerMuscles);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         musclesList.setLayoutManager(layoutManager);
 //recycler listener
         MusclesAdapter.OnMusclesClickListener onMusclesClickListener  = new MusclesAdapter.OnMusclesClickListener() {
@@ -43,23 +43,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        //create database
-        SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app.db", MODE_PRIVATE, null);
-        db.execSQL("CREATE TABLE IF NOT EXISTS Muscles (id Integer PRIMARY KEY, id_group Integer NOT NULL, name TEXT NOT NULL, photo Text NOT NULL);");
-
         //add muscles data
-        ArrayList<Muscles> muscles = new ArrayList<Muscles>(5);
-        Muscles mMuscles = new Muscles(1,1,"first", "asd");
-        muscles.add(mMuscles);
-        mMuscles = new Muscles(2,1,"second","asd");
-        muscles.add(mMuscles);
-        mMuscles = new Muscles(3,1,"third","asd");
-        muscles.add(mMuscles);
-        mMuscles = new Muscles(4,1,"forth","asd");
-        muscles.add(mMuscles);
-        mMuscles = new Muscles(5,1,"fitf","asd");
-        muscles.add(mMuscles);
-        //recycler adapter
+        muscles = new ArrayList<>();
+        getMuscleForGroup(1);
+        // recycler adapter
         musclesAdapter = new MusclesAdapter(muscles,onMusclesClickListener);
         musclesList.setAdapter(musclesAdapter);
 //bottom navigation
@@ -68,15 +55,43 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()){
                 case R.id.chest:
                     txt.setText("Chest + triceps");
+                    getMuscleForGroup(2);
+
+                    musclesAdapter = new MusclesAdapter(muscles,onMusclesClickListener);
+                    musclesList.setAdapter(musclesAdapter);
                     break;
                 case R.id.legs:
                     txt.setText("Legs + shoulders");
+                    getMuscleForGroup(1);
+                    musclesAdapter = new MusclesAdapter(muscles,onMusclesClickListener);
+                    musclesList.setAdapter(musclesAdapter);
                     break;
                 case R.id.biceps:
                     txt.setText("Biceps + back");
+                    getMuscleForGroup(3);
+                    musclesAdapter = new MusclesAdapter(muscles,onMusclesClickListener);
+                    musclesList.setAdapter(musclesAdapter);
                     break;
             }
             return true;
         });
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //myDBManeger.openDB();
+    }
+    public void getMuscleForGroup(int id_group){
+        muscles.clear();
+        for(int i = 0; i<12; i++){
+            if(id_grp.get(i)==id_group){
+                Muscles mMuscle = new Muscles(i+1,id_grp.get(i),names.get(i));
+                muscles.add(mMuscle);
+            }
+        }
+    }
+
+    public void muscleRV(){
+
     }
 }
