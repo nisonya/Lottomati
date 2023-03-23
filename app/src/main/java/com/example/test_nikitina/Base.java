@@ -16,7 +16,7 @@ public class Base {
             "https://thumbs.gfycat.com/ExcitableOblongFluke-max-1mb.gif",
             "https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Lateral-Raise.gif");
 
-    public static List<Integer> descr= Arrays.asList(R.string.Barbell_Overhead_Press, R.string.Dumbbell_Seated_Overhead_Press);
+    public static List<Integer> descr= Arrays.asList(R.string.Barbell_Overhead_Press, R.string.Dumbbell_Seated_Overhead_Press, R.string.Cable_Lateral_Raise);
 
     public static List<Integer> getId_group() {
         return id_group;

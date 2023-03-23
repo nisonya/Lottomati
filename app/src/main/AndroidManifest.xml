@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.test_nikitina">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.INTERNET"/>
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    android:usesCleartextTraffic="true"
+    android:exported="true"
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

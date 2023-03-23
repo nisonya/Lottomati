@@ -45,7 +45,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/RecyclerExersise"
                 android:layout_width="413dp"
-                android:layout_height="534dp"
+                android:layout_height="wюrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/RecyclerMuscles"
