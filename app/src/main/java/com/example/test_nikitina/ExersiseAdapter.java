@@ -44,9 +44,10 @@ public class ExersiseAdapter extends RecyclerView.Adapter<ExersiseAdapter.Exersi
         Exersise exersiseItem = mExersise.get(position);
         holder.name.setText(String.valueOf(exersiseItem.getName()));
         holder.description.setText(exersiseItem.getDescription());
-        /*Glide
+        Glide
                 .with(holder.itemView.getContext())
-                .load(String.valueOf(exersiseItem.getPhoto()).into(imageView);*/
+                .load(String.valueOf(exersiseItem.getPhoto()))
+                .into(holder.photo);
     }
 
     @Override
