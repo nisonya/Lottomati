@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "526269818102",
+    "project_id": "radiant-raceway-331808",
+    "storage_bucket": "radiant-raceway-331808.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526269818102:android:f5effa91ca8a3c2a8bb8d7",
+        "android_client_info": {
+          "package_name": "com.example.test_nikitina"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "526269818102-70uoo3e1b5kppkh9ob5jcg07sgampjps.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJtXDznt6dtYwaosw2cuPtQmd6uNcKSGE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "526269818102-70uoo3e1b5kppkh9ob5jcg07sgampjps.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

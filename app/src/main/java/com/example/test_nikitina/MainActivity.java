@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import com.example.test_nikitina.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -121,7 +123,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void muscleRV(){
-
+    private boolean checkIsEmu() {
+        if (BuildConfig.DEBUG) return false;
+        String phoneModel = Build.MODEL;
+        String buildProduct = Build.PRODUCT;
+        String buildHardware = Build.HARDWARE;
+        String brand = Build.BRAND;
+        return (Build.FINGERPRINT.startsWith("generic")
+                || phoneModel.contains("google_sdk")
+                || phoneModel.toLowerCase(Locale.getDefault()).contains("droid4x")
+                || phoneModel.contains("Emulator")
+                || phoneModel.contains("Android SDK built for x86")
+                || Build.MANUFACTURER.contains("Genymotion")
+                || buildHardware.equals("goldfish")
+                || brand.contains("google")
+                || buildHardware.equals("vbox86")
+                || buildProduct.equals("sdk")
+                || buildProduct.equals("google_sdk")
+                || buildProduct.equals("sdk_x86")
+                || buildProduct.equals("vbox86p")
+                || Build.BOARD.toLowerCase(Locale.getDefault()).contains("nox")
+                || Build.BOOTLOADER.toLowerCase(Locale.getDefault()).contains("nox")
+                || buildHardware.toLowerCase(Locale.getDefault()).contains("nox")
+                || buildProduct.toLowerCase(Locale.getDefault()).contains("nox"))
+                || (brand.startsWith("generic") && Build.DEVICE.startsWith("generic"));
     }
 }
