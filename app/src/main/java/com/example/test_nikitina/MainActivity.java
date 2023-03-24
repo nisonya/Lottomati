@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -37,72 +38,83 @@ public class MainActivity extends AppCompatActivity {
     List<String> name_exer= Base.getName_exer();
     List<String> photo= Base.getPhoto();
     List<Integer> descr= Base.getDescr();
-    ImageView iv;
+    private static final String FILE_NAME="MY_FILE_NAME";
+    private static final String URL_STRING="URL_STRING";
+    String url_str;
+    SharedPreferences sPref;
+    SharedPreferences.Editor ed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        txt = (TextView) findViewById(R.id.textView);
+
+        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
+        url_str = sPref.getString(URL_STRING,"");
+        if(url_str=="") {
+            ed = sPref.edit();
+            ed.putString(URL_STRING, "dsdf");
+            ed.apply();
+            binding = ActivityMainBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+            txt = (TextView) findViewById(R.id.textView);
 //recycler
-        musclesList = findViewById(R.id.RecyclerMuscles);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        musclesList.setLayoutManager(layoutManager);
+            musclesList = findViewById(R.id.RecyclerMuscles);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            musclesList.setLayoutManager(layoutManager);
 //recycler listener
-        MusclesAdapter.OnMusclesClickListener onMusclesClickListener  = new MusclesAdapter.OnMusclesClickListener() {
-            @Override
-            public void onMusclesClick(Muscles muslesItem) {
-                Toast.makeText(getApplicationContext(), String.valueOf(muslesItem.getId()),
-                        Toast.LENGTH_SHORT).show();
-            }
-        };
+            MusclesAdapter.OnMusclesClickListener onMusclesClickListener = new MusclesAdapter.OnMusclesClickListener() {
+                @Override
+                public void onMusclesClick(Muscles muslesItem) {
+                    Toast.makeText(getApplicationContext(), String.valueOf(muslesItem.getId()),
+                            Toast.LENGTH_SHORT).show();
+                }
+            };
 
-        //add muscles data
-        muscles = new ArrayList<>();
-        getMuscleForGroup(1);
-        // recycler adapter
-        musclesAdapter = new MusclesAdapter(muscles,onMusclesClickListener);
-        musclesList.setAdapter(musclesAdapter);
+            //add muscles data
+            muscles = new ArrayList<>();
+            getMuscleForGroup(1);
+            // recycler adapter
+            musclesAdapter = new MusclesAdapter(muscles, onMusclesClickListener);
+            musclesList.setAdapter(musclesAdapter);
 
 
-
-        //recycler for Exersise
-        exersiseList = findViewById(R.id.RecyclerExersise);
-        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        exersiseList.setLayoutManager(layoutManager2);
-        //add muscles data
-        exersises = new ArrayList<>();
-        getExForMuscles(1);
-        // recycler adapter
-        exersiseAdapter = new ExersiseAdapter(exersises);
-        exersiseList.setAdapter(exersiseAdapter);
-
+            //recycler for Exersise
+            exersiseList = findViewById(R.id.RecyclerExersise);
+            LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            exersiseList.setLayoutManager(layoutManager2);
+            //add muscles data
+            exersises = new ArrayList<>();
+            getExForMuscles(1);
+            // recycler adapter
+            exersiseAdapter = new ExersiseAdapter(exersises);
+            exersiseList.setAdapter(exersiseAdapter);
 
 
 //bottom navigation
-        binding.bottomNavigationView.setOnItemSelectedListener(item ->{
+            binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 
-            switch (item.getItemId()){
-                case R.id.chest:
-                    txt.setText("Chest + triceps");
-                    getMuscleForGroup(2);
-                    musclesList.setAdapter(musclesAdapter);
-                    break;
-                case R.id.legs:
-                    txt.setText("Legs + shoulders");
-                    getMuscleForGroup(1);
-                    musclesList.setAdapter(musclesAdapter);
-                    break;
-                case R.id.biceps:
-                    txt.setText("Biceps + back");
-                    getMuscleForGroup(3);
-                    musclesList.setAdapter(musclesAdapter);
-                    break;
-            }
-            return true;
-        });
+                switch (item.getItemId()) {
+                    case R.id.chest:
+                        txt.setText("Chest + triceps");
+                        getMuscleForGroup(2);
+                        musclesList.setAdapter(musclesAdapter);
+                        break;
+                    case R.id.legs:
+                        txt.setText("Legs + shoulders");
+                        getMuscleForGroup(1);
+                        musclesList.setAdapter(musclesAdapter);
+                        break;
+                    case R.id.biceps:
+                        txt.setText("Biceps + back");
+                        getMuscleForGroup(3);
+                        musclesList.setAdapter(musclesAdapter);
+                        break;
+                }
+                return true;
+            });
+        }else{
+            browse();
+        }
     }
     @Override
     protected void onResume() {
@@ -155,6 +167,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToBroswer(View view) {
+        browse();
+    }
+    public void browse(){
         Intent intent = new Intent(MainActivity.this, MainActivity3.class);
         startActivity(intent);
     }
