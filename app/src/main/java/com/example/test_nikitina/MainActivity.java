@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.test_nikitina.databinding.ActivityMainBinding;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +45,20 @@ public class MainActivity extends AppCompatActivity {
     String url_str;
     SharedPreferences sPref;
     SharedPreferences.Editor ed;
+    private FirebaseRemoteConfig mfirebaseRemoteConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
         url_str = sPref.getString(URL_STRING,"");
+
+        mfirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(3600)
+                .build();
+        mfirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
+        mfirebaseRemoteConfig.setDefaultsAsync(R.xml.url_values);
         if(url_str=="") {
             ed = sPref.edit();
             ed.putString(URL_STRING, "dsdf");
@@ -117,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, InernetNone.class);
                 startActivity(intent);
             }
-            else {
-                browse();
+            else{
+            browse();
             }
         }
     }
