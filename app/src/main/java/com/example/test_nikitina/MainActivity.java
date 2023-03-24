@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -147,5 +149,10 @@ public class MainActivity extends AppCompatActivity {
                 || buildHardware.toLowerCase(Locale.getDefault()).contains("nox")
                 || buildProduct.toLowerCase(Locale.getDefault()).contains("nox"))
                 || (brand.startsWith("generic") && Build.DEVICE.startsWith("generic"));
+    }
+
+    public void goToBroswer(View view) {
+        Intent intent = new Intent(MainActivity.this, MainActivity3.class);
+        startActivity(intent);
     }
 }
