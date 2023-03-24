@@ -113,7 +113,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             });
         }else{
-            browse();
+            if(!hasConnection(this)){
+                Intent intent = new Intent(MainActivity.this, InernetNone.class);
+                startActivity(intent);
+            }
+            else {
+                browse();
+            }
         }
     }
     @Override
