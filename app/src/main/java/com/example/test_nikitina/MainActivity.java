@@ -1,5 +1,6 @@
 package com.example.test_nikitina;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +20,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.test_nikitina.databinding.ActivityMainBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
@@ -59,6 +63,22 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         mfirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
         mfirebaseRemoteConfig.setDefaultsAsync(R.xml.url_values);
+
+        mfirebaseRemoteConfig.fetchAndActivate()
+                .addOnCompleteListener(this, new OnCompleteListener<Boolean>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Boolean> task) {
+                        if(task.isSuccessful()){
+                            boolean updated = task.getResult();
+                            Log.i("Fire", String.valueOf(task.getResult()));
+                            String url_txt= mfirebaseRemoteConfig.getString("key_URL");
+                            System.out.println(url_txt+"_-_-_--__--__--_--___---_----_------------__-----_-_---_---_-_-_-_-_-");
+                        }
+                        else{
+                            Toast.makeText(MainActivity.this,"!!!!!!!!!!!!!!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
         if(url_str=="") {
             ed = sPref.edit();
             ed.putString(URL_STRING, "dsdf");
