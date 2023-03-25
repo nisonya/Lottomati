@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -62,9 +63,6 @@ public class MainActivity extends AppCompatActivity {
             //подключение к FireBase
             getFireBaseUrlConnection();
             getURLStr();
-            //проверка эмулятора и есть ли ссылка на FireBase
-            //if ((url_FB == "")||checkIsEmu()) {
-
         }else{
             //проверка на подключение к интернету
             if(!hasConnection(this)){
@@ -154,32 +152,37 @@ public class MainActivity extends AppCompatActivity {
 
     //получение ссылки и обработка вызова заглушки/WebView
     public void getURLStr(){
-        mfirebaseRemoteConfig.fetchAndActivate()
-                .addOnCompleteListener(this, new OnCompleteListener<Boolean>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Boolean> task) {
-                        if(task.isSuccessful()){
-                            Log.i("Fire", String.valueOf(task.getResult()));
-                            url_FB=mfirebaseRemoteConfig.getString("url");
-                            if(url_FB.isEmpty()){
-                                Log.i("Fire", "empty string");
-                                if((url_FB.isEmpty())||checkIsEmu()) plug();
-                                else browse(url_FB);
-                            }
-                            else {
+        try {
+            mfirebaseRemoteConfig.fetchAndActivate()
+                    .addOnCompleteListener(this, new OnCompleteListener<Boolean>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Boolean> task) {
+                            if (task.isSuccessful()) {
+                                Log.i("Fire", String.valueOf(task.getResult()));
                                 url_FB = mfirebaseRemoteConfig.getString("url");
-                                Log.i("Fire", url_FB);
-                                saveToSP();
-                            }
+                                if (url_FB.isEmpty()) {
+                                    Log.i("Fire", "empty string");
+                                    if ((url_FB.isEmpty()) || checkIsEmu()) plug();
+                                    else browse(url_FB);
+                                } else {
+                                    url_FB = mfirebaseRemoteConfig.getString("url");
+                                    Log.i("Fire", url_FB);
+                                    saveToSP();
+                                }
 
+                            } else {
+                                url_FB = "";
+                                plug();
+                                Log.i("Fire", "null2");
+                            }
                         }
-                        else{
-                            url_FB ="";
-                            plug();
-                            Log.i("Fire", "null2");
-                        }
-                    }
-                });
+                    });
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            Intent intent = new Intent(MainActivity.this, InernetNone.class);
+            startActivity(intent);
+        }
     }
     //получение локальной ссылки
     public String getSharedPrefStr(){
@@ -199,8 +202,6 @@ public class MainActivity extends AppCompatActivity {
     }
     //вызыв зваглушки
     public void plug(){
-            System.out.println("FireBase 00000000000000000");
-            Toast.makeText(MainActivity.this,"FireBase 00000000000000000", Toast.LENGTH_SHORT).show();
             binding = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
             txt = (TextView) findViewById(R.id.textView);
@@ -258,8 +259,6 @@ public class MainActivity extends AppCompatActivity {
     }
     //сохранение ссылки локально
     public void saveToSP(){
-        System.out.println("FireBase 111111111111111");
-        Toast.makeText(MainActivity.this,"FireBase 111111111111111", Toast.LENGTH_SHORT).show();
         ed = sPref.edit();
         ed.putString(URL_STRING, url_FB);
         ed.apply();
