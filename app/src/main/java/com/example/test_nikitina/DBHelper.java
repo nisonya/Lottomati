@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public final static String KEY_ID="_id";
     public final static String KEY_MUSCLE_ID="muscle_id";
     public final static String KEY_NAME="name";
-    public final static String KEY_DESCRIPTION="desc";
+    public final static String KEY_DESCRIPTION="description";
     public final static String KEY_PHOTO="photo";
 
     public DBHelper(@Nullable Context context) {
@@ -40,7 +40,7 @@ public class DBHelper extends SQLiteOpenHelper {
         //создаем таблицу
         db.execSQL("create table "+ TABLE_NAME + "("
                 + KEY_ID+" integer primary key autoincrement, "+KEY_MUSCLE_ID +" integer, "
-        +KEY_NAME+" text,"+KEY_DESCRIPTION+" text, "+KEY_PHOTO+" text"+")");
+        +KEY_NAME+" text, "+KEY_DESCRIPTION+" text, "+KEY_PHOTO+" text"+")");
 
         //заполняем её
         for(int i =0;i< name_exer.length;i++){
