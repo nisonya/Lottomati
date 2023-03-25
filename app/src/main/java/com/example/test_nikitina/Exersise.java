@@ -5,9 +5,9 @@ public class Exersise {
     int id_musle;
     String name;
     String photo;
-    int description;
+    String description;
 
-    public Exersise(int id, int id_musle, String name, String photo, int description) {
+    public Exersise(int id, int id_musle, String name, String description, String photo) {
         this.id = id;
         this.id_musle = id_musle;
         this.name = name;
@@ -31,7 +31,7 @@ public class Exersise {
         return photo;
     }
 
-    public int getDescription() {
+    public String getDescription() {
         return description;
     }
 }
