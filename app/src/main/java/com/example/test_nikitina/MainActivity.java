@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //проверка сохранена ли ссылка
         DBHelper dbHelper = new DBHelper(this);
-        database= dbHelper.getReadableDatabase();
+        database= dbHelper.getWritableDatabase();
         url_SP = getSharedPrefStr();
         if(url_SP=="") {
             //подключение к FireBase

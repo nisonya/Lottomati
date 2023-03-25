@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -38,17 +39,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues cv = new ContentValues();
         //создаем таблицу
-        db.execSQL("create table "+ TABLE_NAME + "("
+        db.execSQL("create table if not exists "+ TABLE_NAME + "("
                 + KEY_ID+" integer primary key autoincrement, "+KEY_MUSCLE_ID +" integer, "
         +KEY_NAME+" text, "+KEY_DESCRIPTION+" text, "+KEY_PHOTO+" text"+")");
+
+        Log.d("mLog","Created");
         //заполняем её
         for(int i =0;i< name_exer.length;i++){
             cv.clear();
-            cv.put("KEY_MUSCLE_ID", id_musle[i]);
-            cv.put("KEY_NAME", name_exer[i]);
-            cv.put("KEY_DESCRIPTION", descr[i]);
-            cv.put("KEY_PHOTO", photo[i]);
+            cv.put(KEY_MUSCLE_ID, id_musle[i]);
+            cv.put(KEY_NAME, name_exer[i]);
+            cv.put(KEY_DESCRIPTION, descr[i]);
+            cv.put(KEY_PHOTO, photo[i]);
             db.insert(TABLE_NAME, null, cv);
+            Log.d("mLog","added");
         }
 
     }
