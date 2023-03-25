@@ -24,10 +24,12 @@
         <activity
             android:name=".MainActivity3"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:exported="false" />
+            android:usesCleartextTraffic="true"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:usesCleartextTraffic="true"
+            android:exported="true" />
         <activity
             android:name=".MainActivity2"
             android:exported="true">

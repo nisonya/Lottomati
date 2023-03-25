@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String FILE_NAME="MY_FILE_NAME";
     private static final String URL_STRING="URL_STRING";
     String url_FB;
+    String url_SP;
     SharedPreferences sPref;
     SharedPreferences.Editor ed;
     private FirebaseRemoteConfig mfirebaseRemoteConfig;
@@ -56,103 +57,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //проверка сохранена ли ссылка
-        if((getSharedPrefStr()=="0")||(getSharedPrefStr()=="")) {
-            System.out.println("SharedPre 00000000000000000");
-            Toast.makeText(MainActivity.this,"SharedPre 00000000000000000", Toast.LENGTH_SHORT).show();
+        url_SP = getSharedPrefStr();
+        if(url_SP=="") {
             //подключение к FireBase
             getFireBaseUrlConnection();
             getURLStr();
             //проверка эмулятора и есть ли ссылка на FireBase
             //if ((url_FB == "")||checkIsEmu()) {
-            if (url_FB == "0") {
-                System.out.println("FireBase 00000000000000000");
-                Toast.makeText(MainActivity.this,"FireBase 00000000000000000", Toast.LENGTH_SHORT).show();
-                binding = ActivityMainBinding.inflate(getLayoutInflater());
-                setContentView(binding.getRoot());
-                txt = (TextView) findViewById(R.id.textView);
-                //recycler
-                musclesList = findViewById(R.id.RecyclerMuscles);
-                LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-                musclesList.setLayoutManager(layoutManager);
-                //recycler listener
-                MusclesAdapter.OnMusclesClickListener onMusclesClickListener = new MusclesAdapter.OnMusclesClickListener() {
-                    @Override
-                    public void onMusclesClick(Muscles muslesItem) {
-                        Toast.makeText(getApplicationContext(), String.valueOf(muslesItem.getId()),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                };
 
-                //add muscles data
-                muscles = new ArrayList<>();
-                getMuscleForGroup(1);
-                // recycler adapter
-                musclesAdapter = new MusclesAdapter(muscles, onMusclesClickListener);
-                musclesList.setAdapter(musclesAdapter);
-                //recycler for Exersise
-                exersiseList = findViewById(R.id.RecyclerExersise);
-                LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-                exersiseList.setLayoutManager(layoutManager2);
-                //add muscles data
-                exersises = new ArrayList<>();
-                getExForMuscles(1);
-                // recycler adapter
-                exersiseAdapter = new ExersiseAdapter(exersises);
-                exersiseList.setAdapter(exersiseAdapter);
-                //bottom navigation
-                binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-
-                    switch (item.getItemId()) {
-                        case R.id.chest:
-                            txt.setText("Chest + triceps");
-                            getMuscleForGroup(2);
-                            musclesList.setAdapter(musclesAdapter);
-                            break;
-                        case R.id.legs:
-                            txt.setText("Legs + shoulders");
-                            getMuscleForGroup(1);
-                            musclesList.setAdapter(musclesAdapter);
-                            break;
-                        case R.id.biceps:
-                            txt.setText("Biceps + back");
-                            getMuscleForGroup(3);
-                            musclesList.setAdapter(musclesAdapter);
-                            break;
-                    }
-                    return true;
-                });
-            }
-            else{ //Ссылка есть, сохраняем её в SharedPreferences и запускаем WebView
-                System.out.println("FireBase 111111111111111");
-                Toast.makeText(MainActivity.this,"FireBase 111111111111111", Toast.LENGTH_SHORT).show();
-                ed = sPref.edit();
-                ed.putString(URL_STRING, url_FB);
-                ed.apply();
-                browse();
-            }
         }else{
-            System.out.println("SharedPre 1111111111111");
-            Toast.makeText(MainActivity.this,"SharedPre 1111111111111", Toast.LENGTH_SHORT).show();
             //проверка на подключение к интернету
             if(!hasConnection(this)){
                 Intent intent = new Intent(MainActivity.this, InernetNone.class);
                 startActivity(intent);
             }
             else{//запускаем WebView
-                browse();
+                browse(url_SP);
             }
         }
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //myDBManeger.openDB();
-    }
 
-    public void browse(){
+    //включение WebView
+    public void browse(String url){
         Intent intent = new Intent(MainActivity.this, MainActivity3.class);
+        intent.putExtra("url", url);
         startActivity(intent);
     }
+    //заполнение данных мышц
     public void getMuscleForGroup(int id_group){
         muscles.clear();
         for(int i = 0; i<12; i++){
@@ -162,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    //заполнение данных упражнений
     public void getExForMuscles(int id_muscle){
         exersises.clear();
         for(int i = 0;i < id_musle.size(); i++){
@@ -171,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
+    //проверка эмулятора
     private boolean checkIsEmu() {
         if (BuildConfig.DEBUG) return false;
         String phoneModel = Build.MODEL;
@@ -198,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 || (brand.startsWith("generic") && Build.DEVICE.startsWith("generic"));
     }
 
+    //проверка интернет подключения
     public static boolean hasConnection(final Context context)
     {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -218,44 +151,118 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+
+    //получение ссылки и обработка вызова заглушки/WebView
     public void getURLStr(){
         mfirebaseRemoteConfig.fetchAndActivate()
                 .addOnCompleteListener(this, new OnCompleteListener<Boolean>() {
                     @Override
                     public void onComplete(@NonNull Task<Boolean> task) {
                         if(task.isSuccessful()){
-                            boolean updated = task.getResult();
                             Log.i("Fire", String.valueOf(task.getResult()));
-                            if(task.getResult()) {
-                                url_FB = mfirebaseRemoteConfig.getString("key_URL");
-                                System.out.println(url_FB + "-_-_-_---_-_-_-------_-------_-_---_--_____---");
-                            }else{
-                                Toast.makeText(MainActivity.this,"String is clear", Toast.LENGTH_SHORT).show();
-                                url_FB ="";
-                                System.out.println(url_FB + "-_-_-_---_-_-_-------_-------_-_---_--_____---");
+                            url_FB=mfirebaseRemoteConfig.getString("url");
+                            if(url_FB.isEmpty()){
+                                Log.i("Fire", "empty string");
+                                if((url_FB.isEmpty())||checkIsEmu()) plug();
+                                else browse(url_FB);
                             }
+                            else {
+                                url_FB = mfirebaseRemoteConfig.getString("url");
+                                Log.i("Fire", url_FB);
+                                saveToSP();
+                            }
+
                         }
                         else{
-                            Toast.makeText(MainActivity.this,"Failed", Toast.LENGTH_SHORT).show();
                             url_FB ="";
+                            plug();
+                            Log.i("Fire", "null2");
                         }
                     }
                 });
     }
-
+    //получение локальной ссылки
     public String getSharedPrefStr(){
         sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
         String url_SP = sPref.getString(URL_STRING,"");
         return url_SP;
     }
-
+    //подключение к Firebase
     public void getFireBaseUrlConnection(){
         //подключение к FireBase
         mfirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setMinimumFetchIntervalInSeconds(3600)
+                .setMinimumFetchIntervalInSeconds(10)
                 .build();
         mfirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
         mfirebaseRemoteConfig.setDefaultsAsync(R.xml.url_values);
+    }
+    //вызыв зваглушки
+    public void plug(){
+            System.out.println("FireBase 00000000000000000");
+            Toast.makeText(MainActivity.this,"FireBase 00000000000000000", Toast.LENGTH_SHORT).show();
+            binding = ActivityMainBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+            txt = (TextView) findViewById(R.id.textView);
+            //recycler
+            musclesList = findViewById(R.id.RecyclerMuscles);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            musclesList.setLayoutManager(layoutManager);
+            //recycler listener
+            MusclesAdapter.OnMusclesClickListener onMusclesClickListener = new MusclesAdapter.OnMusclesClickListener() {
+                @Override
+                public void onMusclesClick(Muscles muslesItem) {
+                    Toast.makeText(getApplicationContext(), String.valueOf(muslesItem.getId()),
+                            Toast.LENGTH_SHORT).show();
+                }
+            };
+
+            //add muscles data
+            muscles = new ArrayList<>();
+            getMuscleForGroup(1);
+            // recycler adapter
+            musclesAdapter = new MusclesAdapter(muscles, onMusclesClickListener);
+            musclesList.setAdapter(musclesAdapter);
+            //recycler for Exersise
+            exersiseList = findViewById(R.id.RecyclerExersise);
+            LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            exersiseList.setLayoutManager(layoutManager2);
+            //add muscles data
+            exersises = new ArrayList<>();
+            getExForMuscles(1);
+            // recycler adapter
+            exersiseAdapter = new ExersiseAdapter(exersises);
+            exersiseList.setAdapter(exersiseAdapter);
+            //bottom navigation
+            binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+
+                switch (item.getItemId()) {
+                    case R.id.chest:
+                        txt.setText("Chest + triceps");
+                        getMuscleForGroup(2);
+                        musclesList.setAdapter(musclesAdapter);
+                        break;
+                    case R.id.legs:
+                        txt.setText("Legs + shoulders");
+                        getMuscleForGroup(1);
+                        musclesList.setAdapter(musclesAdapter);
+                        break;
+                    case R.id.biceps:
+                        txt.setText("Biceps + back");
+                        getMuscleForGroup(3);
+                        musclesList.setAdapter(musclesAdapter);
+                        break;
+                }
+                return true;
+            });
+    }
+    //сохранение ссылки локально
+    public void saveToSP(){
+        System.out.println("FireBase 111111111111111");
+        Toast.makeText(MainActivity.this,"FireBase 111111111111111", Toast.LENGTH_SHORT).show();
+        ed = sPref.edit();
+        ed.putString(URL_STRING, url_FB);
+        ed.apply();
+        browse(url_FB);
     }
 }
