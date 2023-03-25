@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -42,13 +45,15 @@ public class MainActivity extends AppCompatActivity {
     List<Integer> id_grp= Base.getId_group();
     List<Integer> id_musle= Base.getId_musle();
     List<String> names= Base.getName_muscle();
-    List<String> name_exer= Base.getName_exer();
-    List<String> photo= Base.getPhoto();
-    List<Integer> descr= Base.getDescr();
+    //List<String> name_exer= Base.getName_exer();
+    //List<String> photo= Base.getPhoto();
+    //List<Integer> descr= Base.getDescr();
+    DBHelper dbHelper;
     private static final String FILE_NAME="MY_FILE_NAME";
     private static final String URL_STRING="URL_STRING";
     String url_FB;
     String url_SP;
+    SQLiteDatabase database;
     SharedPreferences sPref;
     SharedPreferences.Editor ed;
     private FirebaseRemoteConfig mfirebaseRemoteConfig;
@@ -58,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //проверка сохранена ли ссылка
+        DBHelper dbHelper = new DBHelper(this);
+        database= dbHelper.getReadableDatabase();
         url_SP = getSharedPrefStr();
         if(url_SP=="") {
             //подключение к FireBase
@@ -94,12 +101,33 @@ public class MainActivity extends AppCompatActivity {
     //заполнение данных упражнений
     public void getExForMuscles(int id_muscle){
         exersises.clear();
-        for(int i = 0;i < id_musle.size(); i++){
+        ContentValues cv = new ContentValues();
+        Cursor cursor = database.query(DBHelper.TABLE_NAME, null, null, null, null, null,null);
+        if(cursor.moveToFirst()){
+            int idIndex =cursor.getColumnIndex(DBHelper.KEY_ID);
+            int nameIndex =cursor.getColumnIndex(DBHelper.KEY_NAME);
+            int id_muscleIndex =cursor.getColumnIndex(DBHelper.KEY_MUSCLE_ID);
+            int descIndex =cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION);
+            int photoIndex =cursor.getColumnIndex(DBHelper.KEY_PHOTO);
+            do {
+                Exersise mExersise = new Exersise(cursor.getInt(idIndex),
+                        cursor.getInt(id_muscleIndex), cursor.getString(nameIndex), cursor.getString(descIndex),
+                        cursor.getString(photoIndex));
+                exersises.add(mExersise);
+            }while(cursor.moveToNext());
+        }
+        else{
+            Log.d("mLog","0 rows");
+        }
+
+        cursor.close();
+
+        /*for(int i = 0;i < id_musle.size(); i++){
             if(id_musle.get(i)==id_muscle){
                 Exersise mExersise= new Exersise(i+1,id_musle.get(i),name_exer.get(i), photo.get(i), descr.get(i));
                 exersises.add(mExersise);
             }
-        }
+        }*/
     }
     //проверка эмулятора
     private boolean checkIsEmu() {
@@ -202,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
     }
     //вызыв зваглушки
     public void plug(){
+
             binding = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
             txt = (TextView) findViewById(R.id.textView);
