@@ -231,6 +231,11 @@ public class MainActivity extends AppCompatActivity {
             exersiseList = findViewById(R.id.RecyclerExersise);
             LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             exersiseList.setLayoutManager(layoutManager2);
+            //add muscles data
+            exersises = new ArrayList<>();
+            getExForMuscles(1);
+            // recycler adapter
+            exersiseAdapter = new ExersiseAdapter(exersises);
             //recycler for mus
             musclesList = findViewById(R.id.RecyclerMuscles);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -241,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onMusclesClick( Muscles muscles) {
                     getExForMuscles(muscles.getId());
                     Log.d("Muscle", "put");
-
+                    exersiseList.setAdapter(exersiseAdapter);
                     Toast.makeText(getApplicationContext(), "нажатие "+muscles.getName(),
                             Toast.LENGTH_SHORT).show();
                 }
@@ -255,11 +260,6 @@ public class MainActivity extends AppCompatActivity {
             musclesList.setAdapter(musclesAdapter);
             //recycler for Exersise
 
-            //add muscles data
-            exersises = new ArrayList<>();
-            getExForMuscles(1);
-            // recycler adapter
-            exersiseAdapter = new ExersiseAdapter(exersises);
             exersiseList.setAdapter(exersiseAdapter);
             //bottom navigation
             binding.bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -269,16 +269,22 @@ public class MainActivity extends AppCompatActivity {
                         txt.setText("Chest + triceps");
                         getMuscleForGroup(2);
                         musclesList.setAdapter(musclesAdapter);
+                        getExForMuscles(2); //need to be changed
+                        exersiseList.setAdapter(exersiseAdapter);
                         break;
                     case R.id.legs:
                         txt.setText("Legs + shoulders");
                         getMuscleForGroup(1);
                         musclesList.setAdapter(musclesAdapter);
+                        getExForMuscles(1);
+                        exersiseList.setAdapter(exersiseAdapter);
                         break;
                     case R.id.biceps:
                         txt.setText("Biceps + back");
                         getMuscleForGroup(3);
                         musclesList.setAdapter(musclesAdapter);
+                        getExForMuscles(2);//need to be changed
+                        exersiseList.setAdapter(exersiseAdapter);
                         break;
                 }
                 return true;
