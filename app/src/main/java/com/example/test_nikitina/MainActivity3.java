@@ -1,13 +1,22 @@
 package com.example.test_nikitina;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 public class MainActivity3 extends AppCompatActivity {
 
@@ -16,7 +25,8 @@ public class MainActivity3 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
         WebView webView = findViewById(R.id.webView);
-        webView.loadUrl("https://www.youtube.com/watch?v=iABVUYsk-Jw&t=3s&ab_channel=%D0%AE%D0%BB%D0%B8%D0%BA");
+        //получение ссылки
+        webView.loadUrl("dddd");
         //корректность данных
         webView.getSettings().setJavaScriptEnabled(true);
         //loadUrl только в приложение без стороних программ
@@ -35,4 +45,5 @@ public class MainActivity3 extends AppCompatActivity {
         };
         webView.setWebViewClient(webViewClient);
     }
+
 }

@@ -46,108 +46,100 @@ public class MainActivity extends AppCompatActivity {
     List<Integer> descr= Base.getDescr();
     private static final String FILE_NAME="MY_FILE_NAME";
     private static final String URL_STRING="URL_STRING";
-    String url_str;
+    String url_FB;
     SharedPreferences sPref;
     SharedPreferences.Editor ed;
     private FirebaseRemoteConfig mfirebaseRemoteConfig;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
-        url_str = sPref.getString(URL_STRING,"");
-
-        mfirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setMinimumFetchIntervalInSeconds(3600)
-                .build();
-        mfirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
-        mfirebaseRemoteConfig.setDefaultsAsync(R.xml.url_values);
-
-        mfirebaseRemoteConfig.fetchAndActivate()
-                .addOnCompleteListener(this, new OnCompleteListener<Boolean>() {
+        //проверка сохранена ли ссылка
+        if((getSharedPrefStr()=="0")||(getSharedPrefStr()=="")) {
+            System.out.println("SharedPre 00000000000000000");
+            Toast.makeText(MainActivity.this,"SharedPre 00000000000000000", Toast.LENGTH_SHORT).show();
+            //подключение к FireBase
+            getFireBaseUrlConnection();
+            getURLStr();
+            //проверка эмулятора и есть ли ссылка на FireBase
+            //if ((url_FB == "")||checkIsEmu()) {
+            if (url_FB == "0") {
+                System.out.println("FireBase 00000000000000000");
+                Toast.makeText(MainActivity.this,"FireBase 00000000000000000", Toast.LENGTH_SHORT).show();
+                binding = ActivityMainBinding.inflate(getLayoutInflater());
+                setContentView(binding.getRoot());
+                txt = (TextView) findViewById(R.id.textView);
+                //recycler
+                musclesList = findViewById(R.id.RecyclerMuscles);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+                musclesList.setLayoutManager(layoutManager);
+                //recycler listener
+                MusclesAdapter.OnMusclesClickListener onMusclesClickListener = new MusclesAdapter.OnMusclesClickListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Boolean> task) {
-                        if(task.isSuccessful()){
-                            boolean updated = task.getResult();
-                            Log.i("Fire", String.valueOf(task.getResult()));
-                            String url_txt= mfirebaseRemoteConfig.getString("key_URL");
-                            System.out.println(url_txt+"_-_-_--__--__--_--___---_----_------------__-----_-_---_---_-_-_-_-_-");
-                        }
-                        else{
-                            Toast.makeText(MainActivity.this,"!!!!!!!!!!!!!!", Toast.LENGTH_SHORT).show();
-                        }
+                    public void onMusclesClick(Muscles muslesItem) {
+                        Toast.makeText(getApplicationContext(), String.valueOf(muslesItem.getId()),
+                                Toast.LENGTH_SHORT).show();
                     }
+                };
+
+                //add muscles data
+                muscles = new ArrayList<>();
+                getMuscleForGroup(1);
+                // recycler adapter
+                musclesAdapter = new MusclesAdapter(muscles, onMusclesClickListener);
+                musclesList.setAdapter(musclesAdapter);
+                //recycler for Exersise
+                exersiseList = findViewById(R.id.RecyclerExersise);
+                LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+                exersiseList.setLayoutManager(layoutManager2);
+                //add muscles data
+                exersises = new ArrayList<>();
+                getExForMuscles(1);
+                // recycler adapter
+                exersiseAdapter = new ExersiseAdapter(exersises);
+                exersiseList.setAdapter(exersiseAdapter);
+                //bottom navigation
+                binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+
+                    switch (item.getItemId()) {
+                        case R.id.chest:
+                            txt.setText("Chest + triceps");
+                            getMuscleForGroup(2);
+                            musclesList.setAdapter(musclesAdapter);
+                            break;
+                        case R.id.legs:
+                            txt.setText("Legs + shoulders");
+                            getMuscleForGroup(1);
+                            musclesList.setAdapter(musclesAdapter);
+                            break;
+                        case R.id.biceps:
+                            txt.setText("Biceps + back");
+                            getMuscleForGroup(3);
+                            musclesList.setAdapter(musclesAdapter);
+                            break;
+                    }
+                    return true;
                 });
-        if(url_str=="") {
-            ed = sPref.edit();
-            ed.putString(URL_STRING, "dsdf");
-            ed.apply();
-            binding = ActivityMainBinding.inflate(getLayoutInflater());
-            setContentView(binding.getRoot());
-            txt = (TextView) findViewById(R.id.textView);
-//recycler
-            musclesList = findViewById(R.id.RecyclerMuscles);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            musclesList.setLayoutManager(layoutManager);
-//recycler listener
-            MusclesAdapter.OnMusclesClickListener onMusclesClickListener = new MusclesAdapter.OnMusclesClickListener() {
-                @Override
-                public void onMusclesClick(Muscles muslesItem) {
-                    Toast.makeText(getApplicationContext(), String.valueOf(muslesItem.getId()),
-                            Toast.LENGTH_SHORT).show();
-                }
-            };
-
-            //add muscles data
-            muscles = new ArrayList<>();
-            getMuscleForGroup(1);
-            // recycler adapter
-            musclesAdapter = new MusclesAdapter(muscles, onMusclesClickListener);
-            musclesList.setAdapter(musclesAdapter);
-
-
-            //recycler for Exersise
-            exersiseList = findViewById(R.id.RecyclerExersise);
-            LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            exersiseList.setLayoutManager(layoutManager2);
-            //add muscles data
-            exersises = new ArrayList<>();
-            getExForMuscles(1);
-            // recycler adapter
-            exersiseAdapter = new ExersiseAdapter(exersises);
-            exersiseList.setAdapter(exersiseAdapter);
-
-
-//bottom navigation
-            binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-
-                switch (item.getItemId()) {
-                    case R.id.chest:
-                        txt.setText("Chest + triceps");
-                        getMuscleForGroup(2);
-                        musclesList.setAdapter(musclesAdapter);
-                        break;
-                    case R.id.legs:
-                        txt.setText("Legs + shoulders");
-                        getMuscleForGroup(1);
-                        musclesList.setAdapter(musclesAdapter);
-                        break;
-                    case R.id.biceps:
-                        txt.setText("Biceps + back");
-                        getMuscleForGroup(3);
-                        musclesList.setAdapter(musclesAdapter);
-                        break;
-                }
-                return true;
-            });
+            }
+            else{ //Ссылка есть, сохраняем её в SharedPreferences и запускаем WebView
+                System.out.println("FireBase 111111111111111");
+                Toast.makeText(MainActivity.this,"FireBase 111111111111111", Toast.LENGTH_SHORT).show();
+                ed = sPref.edit();
+                ed.putString(URL_STRING, url_FB);
+                ed.apply();
+                browse();
+            }
         }else{
+            System.out.println("SharedPre 1111111111111");
+            Toast.makeText(MainActivity.this,"SharedPre 1111111111111", Toast.LENGTH_SHORT).show();
+            //проверка на подключение к интернету
             if(!hasConnection(this)){
                 Intent intent = new Intent(MainActivity.this, InernetNone.class);
                 startActivity(intent);
             }
-            else{
-            browse();
+            else{//запускаем WebView
+                browse();
             }
         }
     }
@@ -155,6 +147,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //myDBManeger.openDB();
+    }
+
+    public void browse(){
+        Intent intent = new Intent(MainActivity.this, MainActivity3.class);
+        startActivity(intent);
     }
     public void getMuscleForGroup(int id_group){
         muscles.clear();
@@ -201,13 +198,6 @@ public class MainActivity extends AppCompatActivity {
                 || (brand.startsWith("generic") && Build.DEVICE.startsWith("generic"));
     }
 
-    public void goToBroswer(View view) {
-        browse();
-    }
-    public void browse(){
-        Intent intent = new Intent(MainActivity.this, MainActivity3.class);
-        startActivity(intent);
-    }
     public static boolean hasConnection(final Context context)
     {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -227,5 +217,45 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+    public void getURLStr(){
+        mfirebaseRemoteConfig.fetchAndActivate()
+                .addOnCompleteListener(this, new OnCompleteListener<Boolean>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Boolean> task) {
+                        if(task.isSuccessful()){
+                            boolean updated = task.getResult();
+                            Log.i("Fire", String.valueOf(task.getResult()));
+                            if(task.getResult()) {
+                                url_FB = mfirebaseRemoteConfig.getString("key_URL");
+                                System.out.println(url_FB + "-_-_-_---_-_-_-------_-------_-_---_--_____---");
+                            }else{
+                                Toast.makeText(MainActivity.this,"String is clear", Toast.LENGTH_SHORT).show();
+                                url_FB ="";
+                                System.out.println(url_FB + "-_-_-_---_-_-_-------_-------_-_---_--_____---");
+                            }
+                        }
+                        else{
+                            Toast.makeText(MainActivity.this,"Failed", Toast.LENGTH_SHORT).show();
+                            url_FB ="";
+                        }
+                    }
+                });
+    }
+
+    public String getSharedPrefStr(){
+        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
+        String url_SP = sPref.getString(URL_STRING,"");
+        return url_SP;
+    }
+
+    public void getFireBaseUrlConnection(){
+        //подключение к FireBase
+        mfirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(3600)
+                .build();
+        mfirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
+        mfirebaseRemoteConfig.setDefaultsAsync(R.xml.url_values);
     }
 }
