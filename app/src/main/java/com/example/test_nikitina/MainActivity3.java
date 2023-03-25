@@ -24,9 +24,11 @@ public class MainActivity3 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
+        Bundle arguments = getIntent().getExtras();
+        String url = arguments.get("url").toString();
         WebView webView = findViewById(R.id.webView);
         //получение ссылки
-        webView.loadUrl("dddd");
+        webView.loadUrl(url);
         //корректность данных
         webView.getSettings().setJavaScriptEnabled(true);
         //loadUrl только в приложение без стороних программ
