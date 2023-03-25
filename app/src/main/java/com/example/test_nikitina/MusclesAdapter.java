@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,19 +16,23 @@ import com.google.android.material.chip.Chip;
 import java.util.List;
 
 public class MusclesAdapter extends RecyclerView.Adapter<MusclesAdapter.MusclesViewHoler> {
+
+    interface OnMusclesClickListener{
+        void onMusclesClick(Muscles musclesItem);
+    }
     private List<Muscles> mMuscles;
-    private final MusclesAdapter.OnMusclesClickListener onClickListener;
+    private final OnMusclesClickListener onClickListener;
     private static int viewHolderCount;
     private int numberItems;
-    public MusclesAdapter(List<Muscles> muscles, MusclesAdapter.OnMusclesClickListener onClickListener){
+    private Context parent;
+    public MusclesAdapter(List<Muscles> muscles, Context parent, OnMusclesClickListener onClickListener){
         mMuscles =muscles;
         this.onClickListener = onClickListener;
         viewHolderCount = 0;
+        this.parent = parent;
     }
 
-    interface OnMusclesClickListener{
-        void onMusclesClick(Muscles conn);
-    }
+
     @NonNull
     @Override
     public MusclesViewHoler onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,16 +50,14 @@ public class MusclesAdapter extends RecyclerView.Adapter<MusclesAdapter.MusclesV
         holder.bind(position);
         Muscles musclesItem = mMuscles.get(position);
         holder.chipMuscle.setText(String.valueOf(musclesItem.getName()));
-
-        //click
-        holder.itemView.setOnClickListener(new View.OnClickListener(){
+        holder.chipMuscle.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                // вызываем метод слушателя, передавая ему данные
+            public void onClick(View view) {
+                //int positionIndex = getAbsoluteAdapterPosition();
                 onClickListener.onMusclesClick(musclesItem);
             }
         });
+
     }
 
     @Override
@@ -65,16 +68,13 @@ public class MusclesAdapter extends RecyclerView.Adapter<MusclesAdapter.MusclesV
     class MusclesViewHoler extends RecyclerView.ViewHolder {
 
         Chip chipMuscle;
-        TextView chipId;
 
         public MusclesViewHoler(@NonNull View itemView) {
             super(itemView);
             chipMuscle = itemView.findViewById(R.id.chip_item);
+
         }
-        void bind(int listIndex){/*
-            Muscles musclesItem = mMuscles.get(listIndex);
-            chipId.setText(String.valueOf(musclesItem.getId()));
-            chipMuscle.setText(String.valueOf(musclesItem.getName()));*/
+        void bind(int listIndex){
         }
     }
 }

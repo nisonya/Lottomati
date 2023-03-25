@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
     public void getExForMuscles(int id_muscle){
         exersises.clear();
         ContentValues cv = new ContentValues();
-        Cursor cursor = database.query(DBHelper.TABLE_NAME, null, null, null, null, null,null);
+        Cursor cursor = database.query(DBHelper.TABLE_NAME, null, "muscle_id =="+id_muscle, null, null, null,null);
         if(cursor.moveToFirst()){
             int idIndex =cursor.getColumnIndex(DBHelper.KEY_ID);
             int nameIndex =cursor.getColumnIndex(DBHelper.KEY_NAME);
@@ -121,13 +121,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         cursor.close();
-
-        /*for(int i = 0;i < id_musle.size(); i++){
-            if(id_musle.get(i)==id_muscle){
-                Exersise mExersise= new Exersise(i+1,id_musle.get(i),name_exer.get(i), photo.get(i), descr.get(i));
-                exersises.add(mExersise);
-            }
-        }*/
     }
     //проверка эмулятора
     private boolean checkIsEmu() {
@@ -234,15 +227,22 @@ public class MainActivity extends AppCompatActivity {
             binding = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
             txt = (TextView) findViewById(R.id.textView);
-            //recycler
+            //recycler for ex
+            exersiseList = findViewById(R.id.RecyclerExersise);
+            LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            exersiseList.setLayoutManager(layoutManager2);
+            //recycler for mus
             musclesList = findViewById(R.id.RecyclerMuscles);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
             musclesList.setLayoutManager(layoutManager);
             //recycler listener
             MusclesAdapter.OnMusclesClickListener onMusclesClickListener = new MusclesAdapter.OnMusclesClickListener() {
                 @Override
-                public void onMusclesClick(Muscles muslesItem) {
-                    Toast.makeText(getApplicationContext(), String.valueOf(muslesItem.getId()),
+                public void onMusclesClick( Muscles muscles) {
+                    getExForMuscles(muscles.getId());
+                    Log.d("Muscle", "put");
+
+                    Toast.makeText(getApplicationContext(), "нажатие "+muscles.getName(),
                             Toast.LENGTH_SHORT).show();
                 }
             };
@@ -251,12 +251,10 @@ public class MainActivity extends AppCompatActivity {
             muscles = new ArrayList<>();
             getMuscleForGroup(1);
             // recycler adapter
-            musclesAdapter = new MusclesAdapter(muscles, onMusclesClickListener);
+            musclesAdapter = new MusclesAdapter(muscles,this, onMusclesClickListener);
             musclesList.setAdapter(musclesAdapter);
             //recycler for Exersise
-            exersiseList = findViewById(R.id.RecyclerExersise);
-            LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            exersiseList.setLayoutManager(layoutManager2);
+
             //add muscles data
             exersises = new ArrayList<>();
             getExForMuscles(1);
