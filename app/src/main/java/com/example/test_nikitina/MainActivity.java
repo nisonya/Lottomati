@@ -247,8 +247,6 @@ public class MainActivity extends AppCompatActivity {
                     getExForMuscles(muscles.getId());
                     Log.d("Muscle", "put");
                     exersiseList.setAdapter(exersiseAdapter);
-                    Toast.makeText(getApplicationContext(), "нажатие "+muscles.getName(),
-                            Toast.LENGTH_SHORT).show();
                 }
             };
 
@@ -269,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
                         txt.setText("Chest + triceps");
                         getMuscleForGroup(2);
                         musclesList.setAdapter(musclesAdapter);
-                        getExForMuscles(2); //need to be changed
+                        getExForMuscles(6);
                         exersiseList.setAdapter(exersiseAdapter);
                         break;
                     case R.id.legs:
@@ -283,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
                         txt.setText("Biceps + back");
                         getMuscleForGroup(3);
                         musclesList.setAdapter(musclesAdapter);
-                        getExForMuscles(2);//need to be changed
+                        getExForMuscles(9);
                         exersiseList.setAdapter(exersiseAdapter);
                         break;
                 }
