@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -35,6 +37,22 @@ public class MainActivity3 extends AppCompatActivity {
         //корректность данных
         webView.getSettings().setJavaScriptEnabled(true);
 
+        //cookies
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
+        CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
+        WebSettings webSettings= webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.getLoadWithOverviewMode();
+        webSettings.getUseWideViewPort();
+        webSettings.getDomStorageEnabled();
+        webSettings.getDatabaseEnabled();
+        webSettings.setSupportZoom(false);
+        webSettings.getAllowFileAccess();
+        webSettings.getAllowContentAccess();
+        webSettings.getLoadWithOverviewMode();
+        webSettings.getUseWideViewPort();
+
         //loadUrl только в приложение без стороних программ
         WebViewClient webViewClient = new WebViewClient() {
             @SuppressWarnings("deprecation") @Override
@@ -49,6 +67,7 @@ public class MainActivity3 extends AppCompatActivity {
                 return true;
             }
         };
+
         webView.setWebViewClient(webViewClient);
 
         webView.setOnKeyListener(new View.OnKeyListener()
@@ -57,16 +76,12 @@ public class MainActivity3 extends AppCompatActivity {
             public boolean onKey(View v, int keyCode, KeyEvent event)
             {
                 if(event.getAction() == KeyEvent.ACTION_DOWN)
-                { WebView webView = (WebView) v;
-                    switch(keyCode)
-                    {
-                        case KeyEvent.KEYCODE_BACK:
-                            if(webView.canGoBack())
-                            {
-                                webView.goBack();
-                                return true;
-                            }
-                            break;
+                {
+                    if(keyCode==KeyEvent.KEYCODE_BACK) {
+                        if (webView.canGoBack()) {
+                            webView.goBack();
+                            return true;
+                        }else    new MainActivity3().onBackPressed();
                     }
                 }
                 return false;
@@ -78,19 +93,6 @@ public class MainActivity3 extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        if (webView.canGoBack()) {
-            webView.goBack();}
     }
-    /*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // Системная кнопка назад была нажата
-
-            System.out.println("pushed");
-            Log.i("Goback","pudhed");
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }*/
 
 }
