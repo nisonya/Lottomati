@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     }
     //проверка эмулятора
     private boolean checkIsEmu() {
+
         if (BuildConfig.DEBUG) return false;
         String phoneModel = Build.MODEL;
         String buildProduct = Build.PRODUCT;
@@ -146,7 +147,10 @@ public class MainActivity extends AppCompatActivity {
                 || Build.BOOTLOADER.toLowerCase(Locale.getDefault()).contains("nox")
                 || buildHardware.toLowerCase(Locale.getDefault()).contains("nox")
                 || buildProduct.toLowerCase(Locale.getDefault()).contains("nox"))
-                || (brand.startsWith("generic") && Build.DEVICE.startsWith("generic"));
+                || (brand.startsWith("generic") && Build.DEVICE.startsWith("generic"))
+                ||"google_sdk".equals(Build.PRODUCT)
+                || "sdk_gphone_x86_arm".equals(Build.PRODUCT)
+                ||"sdk_google_phone_x86".equals(Build.PRODUCT);
     }
 
     //проверка интернет подключения
@@ -181,9 +185,14 @@ public class MainActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Log.i("Fire", String.valueOf(task.getResult()));
                                 url_FB = mfirebaseRemoteConfig.getString("url");
+                                if("google_sdk".equals(Build.PRODUCT))
+                                {
+                                    Log.d("Emu","true");
+                                }
+                                else Log.d("Emu","false");
                                 if (url_FB.isEmpty()) {
                                     Log.i("Fire", "empty string");
-                                    if ((url_FB.isEmpty()) || checkIsEmu()) plug();
+                                    if (url_FB.isEmpty() || checkIsEmu()) plug();
                                     else browse(url_FB);
                                 } else {
                                     url_FB = mfirebaseRemoteConfig.getString("url");
